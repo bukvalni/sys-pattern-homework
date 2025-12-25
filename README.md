@@ -30,6 +30,11 @@
 Настройте балансировку Round-robin на 4 уровне.
 На проверку направьте конфигурационный файл haproxy, скриншоты, где видно перенаправление запросов на разные серверы при обращении к HAProxy.
 
+
+[Haproxy.cfg](/haproxy.cfg)
+
+
+
 #task1
 frontend tcp_front
     bind *:8080
@@ -41,6 +46,7 @@ backend tcp_back
     balance roundrobin
     server s1_task1 127.0.0.1:8888 check
     server s2_tsak1 127.0.0.1:9999 check
+
 
 
 ![task1](img/task1.png)
@@ -55,6 +61,8 @@ backend tcp_back
 HAproxy должен балансировать только тот http-трафик, который адресован домену example.local
 На проверку направьте конфигурационный файл haproxy, скриншоты, где видно перенаправление запросов на разные серверы при обращении к HAProxy c использованием домена example.local и без него.
 
+
+
 frontend http_front
     bind *:8081
     mode http
@@ -65,14 +73,29 @@ backend weighted_back
     mode http
     balance roundrobin
     server s1_task2 127.0.0.1:7777 weight 2 check
-    server s2_task2 127.0.0.1:8888 weight 3 check
-    server s3_task2 127.0.0.1:9999 weight 4 check
-                                                 
+    server s2_task2 127.0.0.1:8889 weight 3 check
+    server s3_task2 127.0.0.1:9990 weight 4 check
 
+
+
+При перенаправление запросов с помощью домена мы видим что они распределятся с помощью весов, сделав тестовые 9 запросов, перенапрвление на сервера рапридилось следующим оборазом:
+s1_task2 (weight 2): 2
+s2_task2 (weight 3): 3
+s3_task2 (weight 4): 4                                                 
+Таким образом конфигурация работает
+
+Вывод и подсчет логов, дополнительно указан в файле [task2](/weight-log.txt)
+
+Скриншоты:
 С доменом
 ![task2](img/task2_domen.png)
 
 
+При перенаправление запросов без домена происходит ошибка 503
+
+Скриншоты:
 Без домена
 ![task2](img/task2_without.png)
+
+![task2](img/task2_withoutdomen.png)
 
