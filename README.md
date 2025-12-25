@@ -30,7 +30,20 @@
 Настройте балансировку Round-robin на 4 уровне.
 На проверку направьте конфигурационный файл haproxy, скриншоты, где видно перенаправление запросов на разные серверы при обращении к HAProxy.
 
-[task1](img/task1.png)
+#task1
+frontend tcp_front
+    bind *:8080
+    mode tcp
+    default_backend tcp_back
+
+backend tcp_back
+    mode tcp
+    balance roundrobin
+    server s1_task1 127.0.0.1:8888 check
+    server s2_tsak1 127.0.0.1:9999 check
+
+
+![task1](img/task1.png)
 
 ---
 
@@ -42,7 +55,24 @@
 HAproxy должен балансировать только тот http-трафик, который адресован домену example.local
 На проверку направьте конфигурационный файл haproxy, скриншоты, где видно перенаправление запросов на разные серверы при обращении к HAProxy c использованием домена example.local и без него.
 
-[task2](img/task2.png)
+frontend http_front
+    bind *:8081
+    mode http
+    acl host_example hdr(host) -i example.local
+    use_backend weighted_back if host_example
+
+backend weighted_back
+    mode http
+    balance roundrobin
+    server s1_task2 127.0.0.1:7777 weight 2 check
+    server s2_task2 127.0.0.1:8888 weight 3 check
+    server s3_task2 127.0.0.1:9999 weight 4 check
+                                                 
+
+С доменом
+![task2](img/task2_domen.png)
 
 
+Без домена
+![task2](img/task2_without.png)
 
