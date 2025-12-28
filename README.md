@@ -136,6 +136,7 @@ docker-compose logs --tail=20
 
 3.
 
+![Monitoring](img/latest-data.jpg)
 ![Monitoring](img/docker-agent-1.jpg)
 ![Monitoring](img/docker-agent-2.jpg)
 ![Monitoring](img/local-agent.jpg)
