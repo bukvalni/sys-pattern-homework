@@ -53,7 +53,7 @@ sudo systemctl enable zabbix-server apache2 postgresql
 sudo -u postgres psql zabbix -c "UPDATE users SET passwd=md5('zabbix') WHERE username='Admin';"
 curl http://localhost/zabbix
 sudo systemctl status zabbix-server
-
+```
 ---
 
 ![zabbix-password](img/password.jpg)
