@@ -1,4 +1,4 @@
-# Домашнее задание к занятию "`Система мониторинга Zabbix`" - `Букавело Алексей`
+# Домашнее задание к занятию "`Система мониторинга Zabbix. Часть 2`" - `Букавело Алексей`
 
 ### Инструкция по выполнению домашнего задания
 
@@ -19,124 +19,58 @@
 
 1. [Руководство по оформлению Markdown файлов](https://gist.github.com/Jekins/2bf2d0638163f1294637#Code)
 
----
 
 ### Задание 1
 
-Установите Zabbix Server с веб-интерфейсом.
+Задание 1
+Создайте свой шаблон, в котором будут элементы данных, мониторящие загрузку CPU и RAM хоста.
 
 Процесс выполнения
-Выполняя ДЗ, сверяйтесь с процессом отражённым в записи лекции.
-Установите PostgreSQL. Для установки достаточна та версия, что есть в системном репозитороии Debian 11.
-Пользуясь конфигуратором команд с официального сайта, составьте набор команд для установки последней версии Zabbix с поддержкой PostgreSQL и Apache.
-Выполните все необходимые команды для установки Zabbix Server и Zabbix Web Server.
-Требования к результатам
-Прикрепите в файл README.md скриншот авторизации в админке.
-Приложите в файл README.md текст использованных команд в GitHub.
+Выполняя ДЗ сверяйтесь с процессом отражённым в записи лекции.
+В веб-интерфейсе Zabbix Servera в разделе Templates создайте новый шаблон
+Создайте Item который будет собирать информацию об загрузке CPU в процентах
+Создайте Item который будет собирать информацию об загрузке RAM в процентах
 
----
 
-Команды:
-```bash
-sudo apt install postgresql postgresql-contrib -y
-wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_7.0-1+debian12_all.deb
-sudo dpkg -i zabbix-release_7.0-1+debian12_all.deb
-sudo apt update
-sudo apt install zabbix-server-pgsql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts curl nano -y
-sudo -u postgres createuser --pwprompt zabbix
-sudo -u postgres createdb -O zabbix zabbix
-sudo zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix
-sudo nano /etc/zabbix/zabbix_server.conf
-#DBPassword=zabbix
-sudo systemctl restart zabbix-server apache2 postgresql
-sudo systemctl enable zabbix-server apache2 postgresql
-sudo -u postgres psql zabbix -c "UPDATE users SET passwd=md5('zabbix') WHERE username='Admin';"
-curl http://localhost/zabbix
-sudo systemctl status zabbix-server
-```
----
+![задание 1](img/задание1.jpg)
 
-![zabbix-password](img/password.jpg)
-![zabbix](img/zabbix.jpg)
 
 ### Задание 2
 
 Задание 2
-Установите Zabbix Agent на два хоста.
+Добавьте в Zabbix два хоста и задайте им имена <фамилия и инициалы-1> и <фамилия и инициалы-2>. Например: ivanovii-1 и ivanovii-2.
 
 Процесс выполнения
-Выполняя ДЗ, сверяйтесь с процессом отражённым в записи лекции.
-Установите Zabbix Agent на 2 вирт.машины, одной из них может быть ваш Zabbix Server.
-Добавьте Zabbix Server в список разрешенных серверов ваших Zabbix Agentов.
-Добавьте Zabbix Agentов в раздел Configuration > Hosts вашего Zabbix Servera.
-Проверьте, что в разделе Latest Data начали появляться данные с добавленных агентов.
-Требования к результатам
-Приложите в файл README.md скриншот раздела Configuration > Hosts, где видно, что агенты подключены к серверу
-Приложите в файл README.md скриншот лога zabbix agent, где видно, что он работает с сервером
-Приложите в файл README.md скриншот раздела Monitoring > Latest data для обоих хостов, где видны поступающие от агентов данные.
-Приложите в файл README.md текст использованных команд в GitHub
+Выполняя ДЗ сверяйтесь с процессом отражённым в записи лекции.
+Установите Zabbix Agent на 2 виртмашины, одной из них может быть ваш Zabbix Server
+Добавьте Zabbix Server в список разрешенных серверов ваших Zabbix Agentов
+Добавьте Zabbix Agentов в раздел Configuration > Hosts вашего Zabbix Servera
+Прикрепите за каждым хостом шаблон Linux by Zabbix Agent
+Проверьте что в разделе Latest Data начали появляться данные с добавленных агентов
 
----
+### Задание 3
+Привяжите созданный шаблон к двум хостам. Также привяжите к обоим хостам шаблон Linux by Zabbix Agent.
 
-Команды:
-```bash
-sudo apt install docker.io docker-compose -y
-sudo usermod -aG docker $USER
-newgrp docker
-sudo systemctl start docker
-sudo systemctl enable docker
-mkdir ~/zabbix-agents
-cd ~/zabbix-agents
-nano docker-compose.yml
-  services:
-  agent1:
-    image: zabbix/zabbix-agent:alpine-7.0-latest
-    container_name: zabbix-agent-1
-    restart: unless-stopped
-    environment:
-      ZBX_HOSTNAME: "docker-agent-1"
-      ZBX_SERVER_HOST: "10.0.2.15"
-    ports:
-      - "10151:10050"
+Процесс выполнения
+Выполняя ДЗ сверяйтесь с процессом отражённым в записи лекции.
+Зайдите в настройки каждого хоста и в разделе Templates прикрепите к этому хосту ваш шаблон
+Так же к каждому хосту привяжите шаблон Linux by Zabbix Agent
+Проверьте что в раздел Latest Data начали поступать необходимые данные из вашего шаблона
 
-  agent2:
-    image: zabbix/zabbix-agent:alpine-7.0-latest
-    container_name: zabbix-agent-2
-    restart: unless-stopped
-    environment:
-      ZBX_HOSTNAME: "docker-agent-2"
-      ZBX_SERVER_HOST: "10.0.2.15"
-    ports:
-      - "10152:10050"
-docker-compose up -d
-sudo apt install zabbix-agent -y
-sudo nano /etc/zabbix/zabbix_agentd.conf
-#Server=127.0.0.1,10.0.2.15
-#ServerActive=127.0.0.1,10.0.2.15
-sudo systemctl restart zabbix-agent
-sudo systemctl enable zabbix-agent
-sudo zabbix_get -s 127.0.0.1 -p 10050 -k "system.uptime"
-sudo zabbix_get -s 10.0.2.15 -p 10151 -k "system.uptime"
-sudo zabbix_get -s 10.0.2.15 -p 10152 -k "system.uptime"
-sudo netstat -tlnp | grep :10050
-sudo netstat -tlnp | grep :10151
-sudo netstat -tlnp | grep :10152
-sudo tail -20 /var/log/zabbix/zabbix_agentd.log
-docker-compose logs --tail=20
-```
----
+![задание 3](img/задание3-bukvaloaa-1.jpg)
+![задание 3](img/задание3-bukvaloaa-2.jpg)
 
-1.
+![задание 3](img/задание3-хосты.jpgjpg)
 
-![hosts](img/hosts.jpg)
+![задание 3](img/задание3-CPU.jpg)
+![задание 3](img/задание3-RAM.jpg)
 
-2.
+### Задание 4
+Создайте свой кастомный дашборд.
 
-![log-agent](img/log-agent.jpg)
+Процесс выполнения
+Выполняя ДЗ сверяйтесь с процессом отражённым в записи лекции.
+В разделе Dashboards создайте новый дашборд
+Разместите на нём несколько графиков на ваше усмотрение.
 
-3.
-
-![Monitoring](img/latest-data.jpg)
-![Monitoring](img/docker-agent-1.jpg)
-![Monitoring](img/docker-agent-2.jpg)
-![Monitoring](img/local-agent.jpg)
+![задание 4](img/задание4.jpg)
