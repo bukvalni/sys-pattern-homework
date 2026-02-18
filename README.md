@@ -1,54 +1,81 @@
-# Домашнее задание к занятию "`ELK`" - `Букавело Алексей`
-
-### Инструкция по выполнению домашнего задания
-
-1.  Сделайте `fork` данного репозитория к себе в Github и переименуйте его по названию или номеру занятия, например, https://github.com/имя-вашего-репозитория/git-hw или https://github.com/имя-вашего-репозитория/7-1-ansible-hw).
-2.  Выполните клонирование данного репозитория к себе на ПК с помощью команды `git clone`.
-3.  Выполните домашнее задание и заполните у себя локально этот файл README.md:
-    - впишите вверху название занятия и вашу фамилию и имя
-    - в каждом задании добавьте решение в требуемом виде (текст/код/скриншоты/ссылка)
-    - для корректного добавления скриншотов воспользуйтесь [инструкцией "Как вставить скриншот в шаблон с решением](https://github.com/netology-code/sys-pattern-homework/blob/main/screen-instruction.md)
-    - при оформлении используйте возможности языка разметки md (коротко об этом можно посмотреть в [инструкции по MarkDown](https://github.com/netology-code/sys-pattern-homework/blob/main/md-instruction.md))
-4.  После завершения работы над домашним заданием сделайте коммит (`git commit -m "comment"`) и отправьте его на Github (`git push origin`);
-5.  Для проверки домашнего задания преподавателем в личном кабинете прикрепите и отправьте ссылку на решение в виде md-файла в вашем Github.
-6.  Любые вопросы по выполнению заданий спрашивайте в чате учебной группы и/или в разделе “Вопросы по заданию” в личном кабинете.
-
-Желаем успехов в выполнении домашнего задания!
-
-### Дополнительные материалы, которые могут быть полезны для выполнения задания
-
-1. [Руководство по оформлению Markdown файлов](https://gist.github.com/Jekins/2bf2d0638163f1294637#Code)
+# Домашнее задание к занятию "`Работа с данными (DDL/DML)`" - `Букавело Алексей`
 
 
 ### Задание 1
+1.1. Поднимите чистый инстанс MySQL версии 8.0+. Можно использовать локальный сервер или контейнер Docker.
 
-Установите и запустите Elasticsearch, после чего поменяйте параметр cluster_name на случайный.
+1.2. Создайте учётную запись sys_temp.
 
-Приведите скриншот команды 'curl -X GET 'localhost:9200/_cluster/health?pretty', сделанной на сервере с установленным Elasticsearch. Где будет виден нестандартный cluster_name.
+1.3. Выполните запрос на получение списка пользователей в базе данных. (скриншот)
 
-![задание 1](img/задание%201.jpg)
+![задание 1](img/listOfUser.jpg)
+
+1.4. Дайте все права для пользователя sys_temp.
+
+1.5. Выполните запрос на получение списка прав для пользователя sys_temp. (скриншот)
+
+![задание 1](img/right-sys_temp.jpg)
+
+1.6. Переподключитесь к базе данных от имени sys_temp.
+
+Для смены типа аутентификации с sha2 используйте запрос:
+
+```sql
+ALTER USER 'sys_test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+```
+1.6. По ссылке https://downloads.mysql.com/docs/sakila-db.zip скачайте дамп базы данных.
+
+1.7. Восстановите дамп в базу данных.
+
+1.8. При работе в IDE сформируйте ER-диаграмму получившейся базы данных. При работе в командной строке используйте команду для получения всех таблиц базы данных. (скриншот)
+
+![задание 1](img/sakilaTables.jpg)
+
 
 ### Задание 2
+Составьте таблицу, используя любой текстовый редактор или Excel, в которой должно быть два столбца: в первом должны быть названия таблиц восстановленной базы, во втором названия первичных ключей этих таблиц. Пример: (скриншот/текст)
+```
+Название таблицы | Название первичного ключа
+customer         | customer_id
+```
 
-Установите и запустите Kibana.
+Дополнительно вывод таблиц и их ключей файле primary-key.xlsx
 
-Приведите скриншот интерфейса Kibana на странице http://<ip вашего сервера>:5601/app/dev_tools#/console, где будет выполнен запрос GET /_cluster/health?pretty.
-
-![задание 2](img/задание%202.jpg)
-
-### Задание 3
-
-Установите и запустите Logstash и Nginx. С помощью Logstash отправьте access-лог Nginx в Elasticsearch.
-
-Приведите скриншот интерфейса Kibana, на котором видны логи Nginx.
-
-![задание 3](img/задание%203.jpg)
+![задание 2](img/pimary-key.jpg)
 
 
-### Задание 4
-
-Установите и запустите Filebeat. Переключите поставку логов Nginx с Logstash на Filebeat.
-
-Приведите скриншот интерфейса Kibana, на котором видны логи Nginx, которые были отправлены через Filebeat.
-
-![задание 4](img/задание%204.jpg)
+### Команды
+В терминале:
+```bash
+docker run --name mysql-admin -e MYSQL_ROOT_PASSWORD=admin -p 3306:3306 -d mysql:8.0
+docker exec -it mysql-admin mysql -u root -p
+```
+```sql
+В mysql:
+CREATE USER 'sys_temp'@'localhost' IDENTIFIED BY 'temppass';
+USE mysql; SELECT * FROM user;
+GRANT ALL PRIVILEGES ON *.* TO 'sys_temp'@'localhost';
+SHOW GRANTS FOR 'sys_temp'@'localhost';
+ALTER USER 'sys_temp'@'localhost' IDENTIFIED WITH mysql_native_password BY 'usertemppass';
+exit
+```
+В терминале:
+```bash
+docker exec -it mysql-admin mysql -u sys_temp -p
+docker exec -i mysql-admin mysql -u sys_temp -pusertemppass < /home/bukavelo-alexey-aleksandrovich/sakila-db/sakila-schema.sql
+docker exec -i mysql-admin mysql -u sys_temp -pusertemppass < /home/bukavelo-alexey-aleksandrovich/sakila-db/sakila-data.sql
+```
+В mysql:
+```sql
+USE sakila; SHOW TABLES;
+mysql> SELECT
+    ->     TABLE_NAME,
+    ->     COLUMN_NAME
+    -> FROM
+    ->     INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+    -> WHERE
+    ->     TABLE_SCHEMA = 'sakila'
+    ->     AND CONSTRAINT_NAME = 'PRIMARY'
+    -> ORDER BY
+    ->     TABLE_NAME;
+```
