@@ -50,8 +50,8 @@ customer         | customer_id
 docker run --name mysql-admin -e MYSQL_ROOT_PASSWORD=admin -p 3306:3306 -d mysql:8.0
 docker exec -it mysql-admin mysql -u root -p
 ```
-```sql
 В mysql:
+```sql
 CREATE USER 'sys_temp'@'localhost' IDENTIFIED BY 'temppass';
 USE mysql; SELECT * FROM user;
 GRANT ALL PRIVILEGES ON *.* TO 'sys_temp'@'localhost';
